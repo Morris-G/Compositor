@@ -39,10 +39,10 @@ struct RawDevelopSheet: View {
             .frame(width: 560, height: 340)
 
             Group {
-                slider("Exposure", value: $settings.exposure, range: -3...3, unit: " EV", precision: 2)
-                slider("Temperature", value: $settings.temperature, range: 2000...12000, unit: " K", precision: 0)
-                slider("Tint", value: $settings.tint, range: -150...150, unit: "", precision: 0)
-                slider("Boost", value: $settings.boost, range: 0...1, unit: "", precision: 2)
+                slider(localized("Exposure"), value: $settings.exposure, range: -3...3, unit: " EV", precision: 2)
+                slider(localized("Temperature"), value: $settings.temperature, range: 2000...12000, unit: " K", precision: 0)
+                slider(localized("Tint"), value: $settings.tint, range: -150...150, unit: "", precision: 0)
+                slider(localized("Boost"), value: $settings.boost, range: 0...1, unit: "", precision: 2)
 
                 HStack {
                     Button("Reset") { settings.reset() }.disabled(settings.isAsShot)
@@ -78,7 +78,7 @@ struct RawDevelopSheet: View {
     private func slider(_ title: String, value: Binding<Float>, range: ClosedRange<Float>,
                         unit: String, precision: Int) -> some View {
         HStack(spacing: 10) {
-            Text(title).frame(width: 90, alignment: .leading)
+            Text(localized(title)).frame(width: 90, alignment: .leading)
             Slider(value: value, in: range).frame(width: 300)
             Text(String(format: "%.\(precision)f%@", value.wrappedValue, unit))
                 .monospacedDigit().foregroundStyle(.secondary)

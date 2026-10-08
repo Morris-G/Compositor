@@ -10,31 +10,31 @@ struct CameraRawDetailControls: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Sharpening").font(.subheadline)
             sharpenSlider("Amount", \.sharpenAmount, range: CameraRawDetailSettings.sharpenAmountRange, decimals: 0, reset: 0,
-                          help: "Controls how strong the sharpening is.")
+                          help: localized("Controls how strong the sharpening is."))
             sharpenSlider("Radius", \.sharpenRadius, range: CameraRawDetailSettings.unitRange, decimals: 0, reset: 10,
-                          help: "How far from each edge the sharpening reaches, in pixels.")
+                          help: localized("How far from each edge the sharpening reaches, in pixels."))
             sharpenSlider("Detail", \.sharpenDetail, range: CameraRawDetailSettings.unitRange, decimals: 0, reset: 25,
-                          help: "Emphasizes fine texture over broader edges.")
+                          help: localized("Emphasizes fine texture over broader edges."))
             sharpenSlider("Masking", \.sharpenMasking, range: CameraRawDetailSettings.unitRange, decimals: 0, reset: 0,
-                          maskingPreview: true, help: "Limits sharpening to stronger edges. Hold Option to see the mask.")
+                          maskingPreview: true, help: localized("Limits sharpening to stronger edges. Hold Option to see the mask."))
             Text("Noise Reduction").font(.subheadline)
-            slider("Luminance", \.noiseLuminance, range: CameraRawDetailSettings.unitRange, decimals: 0, reset: 0,
-                   help: "Smooths grain and noise in brightness.")
+            slider(localized("Luminance"), \.noiseLuminance, range: CameraRawDetailSettings.unitRange, decimals: 0, reset: 0,
+                   help: localized("Smooths grain and noise in brightness."))
             Group {
-                slider("Luminance Detail", \.noiseLuminanceDetail, range: CameraRawDetailSettings.unitRange, decimals: 0, reset: 50,
-                       help: "Preserves fine texture while luminance noise is reduced.")
-                slider("Luminance Contrast", \.noiseLuminanceContrast, range: CameraRawDetailSettings.unitRange, decimals: 0, reset: 0,
-                       help: "Keeps local contrast after luminance smoothing.")
+                slider(localized("Luminance Detail"), \.noiseLuminanceDetail, range: CameraRawDetailSettings.unitRange, decimals: 0, reset: 50,
+                       help: localized("Preserves fine texture while luminance noise is reduced."))
+                slider(localized("Luminance Contrast"), \.noiseLuminanceContrast, range: CameraRawDetailSettings.unitRange, decimals: 0, reset: 0,
+                       help: localized("Keeps local contrast after luminance smoothing."))
             }
             .opacity(raw.detail.noiseLuminance > 0 ? 1 : 0.45)
             .disabled(raw.detail.noiseLuminance <= 0)
-            slider("Color", \.noiseColor, range: CameraRawDetailSettings.unitRange, decimals: 0, reset: 0,
-                   help: "Smooths colored speckles.")
+            slider(localized("Color"), \.noiseColor, range: CameraRawDetailSettings.unitRange, decimals: 0, reset: 0,
+                   help: localized("Smooths colored speckles."))
             Group {
-                slider("Color Detail", \.noiseColorDetail, range: CameraRawDetailSettings.unitRange, decimals: 0, reset: 50,
-                       help: "Preserves colored edges while color noise is reduced.")
-                slider("Color Smoothness", \.noiseColorSmoothness, range: CameraRawDetailSettings.unitRange, decimals: 0, reset: 50,
-                       help: "Makes the color smoothing softer or tighter.")
+                slider(localized("Color Detail"), \.noiseColorDetail, range: CameraRawDetailSettings.unitRange, decimals: 0, reset: 50,
+                       help: localized("Preserves colored edges while color noise is reduced."))
+                slider(localized("Color Smoothness"), \.noiseColorSmoothness, range: CameraRawDetailSettings.unitRange, decimals: 0, reset: 50,
+                       help: localized("Makes the color smoothing softer or tighter."))
             }
             .opacity(raw.detail.noiseColor > 0 ? 1 : 0.45)
             .disabled(raw.detail.noiseColor <= 0)
@@ -46,7 +46,7 @@ struct CameraRawDetailControls: View {
         let step = pow(10, Double(decimals))
         let value = raw.detail[keyPath: key]
         return HStack(spacing: 10) {
-            Text(title).frame(minWidth: CameraRawControls.labelWidth, alignment: .leading).help(help)
+            Text(localized(title)).frame(minWidth: CameraRawControls.labelWidth, alignment: .leading).help(localized(help))
                 .scrubbable(sensitivity: 1 / step,
                             value: Binding(get: { raw.detail[keyPath: key] },
                                            set: { assignDetail(key, $0, maskingPreview: false) }), range: range)
@@ -56,9 +56,9 @@ struct CameraRawDetailControls: View {
                                 assignDetail(key, stepped, maskingPreview: maskingPreview)
                             },
                             onReset: { assignDetail(key, reset, maskingPreview: false) })
-            TextField(title, value: Binding(get: { raw.detail[keyPath: key] }, set: { assignDetail(key, $0, maskingPreview: false) }),
+            TextField(localized(title), value: Binding(get: { raw.detail[keyPath: key] }, set: { assignDetail(key, $0, maskingPreview: false) }),
                       format: .number.precision(.fractionLength(0...decimals)))
-                .frame(width: 56).textFieldStyle(.roundedBorder).multilineTextAlignment(.trailing).help(help)
+                .frame(width: 56).textFieldStyle(.roundedBorder).multilineTextAlignment(.trailing).help(localized(help))
         }
     }
 
@@ -98,13 +98,13 @@ struct CameraRawOpticsControls: View {
                 Text("No lens metadata on this layer. Profile sliders set generic correction strength.")
                     .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                 opticsSlider("Distortion", \.profileDistortion, range: CameraRawOpticsSettings.unitRange, reset: 100,
-                             help: "How much of the profile distortion correction is applied.")
+                             help: localized("How much of the profile distortion correction is applied."))
                 opticsSlider("Vignetting", \.profileVignetting, range: CameraRawOpticsSettings.unitRange, reset: 100,
-                             help: "How much of the profile vignetting correction is applied.")
+                             help: localized("How much of the profile vignetting correction is applied."))
             }
             Text("Manual").font(.subheadline)
             opticsSlider("Distortion", \.distortion, range: CameraRawOpticsSettings.toneRange, reset: 0,
-                         help: "Straightens barrel or pincushion bending.")
+                         help: localized("Straightens barrel or pincushion bending."))
             HStack(spacing: 10) {
                 Text("Defringe").frame(minWidth: CameraRawControls.labelWidth, alignment: .leading)
                     .help("Click a purple or green fringe to set its hue range.")
@@ -123,17 +123,17 @@ struct CameraRawOpticsControls: View {
                     .font(.caption).foregroundStyle(.secondary)
             }
             opticsSlider("Purple Amount", \.purpleAmount, range: CameraRawOpticsSettings.unitRange, reset: 0,
-                         help: "Weakens purple fringes inside the purple hue range.")
+                         help: localized("Weakens purple fringes inside the purple hue range."))
             hueRange("Purple Hue", low: \.purpleHueLow, high: \.purpleHueHigh,
-                     help: "Hue range where purple defringe runs.")
+                     help: localized("Hue range where purple defringe runs."))
             opticsSlider("Green Amount", \.greenAmount, range: CameraRawOpticsSettings.unitRange, reset: 0,
-                         help: "Weakens green fringes inside the green hue range.")
+                         help: localized("Weakens green fringes inside the green hue range."))
             hueRange("Green Hue", low: \.greenHueLow, high: \.greenHueHigh,
-                     help: "Hue range where green defringe runs.")
+                     help: localized("Hue range where green defringe runs."))
             opticsSlider("Vignetting", \.vignetteAmount, range: CameraRawOpticsSettings.toneRange, reset: 0,
-                         help: "Brightens or darkens the corners to counter lens falloff.")
+                         help: localized("Brightens or darkens the corners to counter lens falloff."))
             opticsSlider("Midpoint", \.vignetteMidpoint, range: CameraRawOpticsSettings.unitRange, reset: 50,
-                         help: "Moves the vignette correction inward or outward.")
+                         help: localized("Moves the vignette correction inward or outward."))
         }
     }
 
@@ -145,7 +145,7 @@ struct CameraRawOpticsControls: View {
                               reset: Double, help: String) -> some View {
         let value = raw.optics[keyPath: key]
         return HStack(spacing: 10) {
-            Text(title).frame(minWidth: CameraRawControls.labelWidth, alignment: .leading).help(help)
+            Text(localized(title)).frame(minWidth: CameraRawControls.labelWidth, alignment: .leading).help(localized(help))
                 .scrubbable(sensitivity: 1,
                             value: Binding(get: { raw.optics[keyPath: key] },
                                            set: { newValue in update { $0.cameraRaw.optics[keyPath: key] = newValue } }), range: range)
@@ -155,25 +155,25 @@ struct CameraRawOpticsControls: View {
                                 update { $0.cameraRaw.optics[keyPath: key] = stepped }
                             },
                             onReset: { update { $0.cameraRaw.optics[keyPath: key] = reset } })
-            TextField(title, value: Binding(get: { raw.optics[keyPath: key] }, set: { newValue in update { $0.cameraRaw.optics[keyPath: key] = newValue } }),
+            TextField(localized(title), value: Binding(get: { raw.optics[keyPath: key] }, set: { newValue in update { $0.cameraRaw.optics[keyPath: key] = newValue } }),
                       format: .number.precision(.fractionLength(0)))
-                .frame(width: 56).textFieldStyle(.roundedBorder).multilineTextAlignment(.trailing).help(help)
+                .frame(width: 56).textFieldStyle(.roundedBorder).multilineTextAlignment(.trailing).help(localized(help))
         }
     }
 
     private func hueRange(_ title: String, low: WritableKeyPath<CameraRawOpticsSettings, Double>,
                           high: WritableKeyPath<CameraRawOpticsSettings, Double>, help: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(title).font(.caption).foregroundStyle(.secondary).help(help)
+            Text(localized(title)).font(.caption).foregroundStyle(.secondary).help(localized(help))
             HStack(spacing: 8) {
                 Text("Low").font(.caption2).help("Start of the hue range, in degrees.")
                 CameraRawSlider(value: raw.optics[keyPath: low], range: CameraRawOpticsSettings.hueRange, track: .plain,
-                                help: "Start of the hue range, in degrees.",
+                                help: localized("Start of the hue range, in degrees."),
                                 onChange: { value in update { $0.cameraRaw.optics[keyPath: low] = value.rounded() } },
                                 onReset: { update { $0.cameraRaw.optics[keyPath: low] = title.contains("Purple") ? 270 : 60 } })
                 Text("High").font(.caption2).help("End of the hue range, in degrees.")
                 CameraRawSlider(value: raw.optics[keyPath: high], range: CameraRawOpticsSettings.hueRange, track: .plain,
-                                help: "End of the hue range, in degrees.",
+                                help: localized("End of the hue range, in degrees."),
                                 onChange: { value in update { $0.cameraRaw.optics[keyPath: high] = value.rounded() } },
                                 onReset: { update { $0.cameraRaw.optics[keyPath: high] = title.contains("Purple") ? 310 : 120 } })
             }

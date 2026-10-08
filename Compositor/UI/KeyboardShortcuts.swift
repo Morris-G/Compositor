@@ -42,7 +42,7 @@ struct ShortcutChord: Codable, Equatable, Hashable {
         return flags
     }
     var label: String {
-        let special = ["\u{7f}": "Delete", "\r": "Return", "\u{1b}": "Esc", "\t": "Tab", " ": "Space",
+        let special = ["\u{7f}": localized("Delete"), "\r": localized("Return"), "\u{1b}": "Esc", "\t": localized("Tab"), " ": localized("Space"),
                        "\u{f702}": "←", "\u{f703}": "→", "\u{f701}": "↓", "\u{f700}": "↑"]
         return (modifiers & 4 != 0 ? "⌃" : "") + (modifiers & 2 != 0 ? "⌥" : "")
             + (modifiers & 8 != 0 ? "⇧" : "") + (modifiers & 1 != 0 ? "⌘" : "")
@@ -97,30 +97,31 @@ struct ShortcutDefinition: Identifiable {
             entry("Show Rulers", "r", 1, menu: true), entry("Snap", ";", 9, menu: true),
             entry("Lock Guides", ";", 3, menu: true)
         ]
-        for (title, key) in [("Toggle Fullscreen: the canvas alone on black (Esc also leaves)", "f"), ("Select tool", "a"), ("Move / Transform tool", "v"), ("Hand tool", "h"),
-            ("Zoom tool", "z"), ("Brush tool", "b"), ("Eraser", "e"), ("Spot Healing", "j"),
-            ("Clone Stamp", "s"), ("Type tool", "t"), ("Gradient tool", "g"), ("Shape tool", "u"),
-            ("Eyedropper tool", "i"), ("Marquee / cycle shape", "m"), ("Magic", "w"),
-            ("Lasso / cycle mode", "l"), ("Blur / Smudge / Liquify", "r"), ("Crop tool", "c"),
-            ("Swap foreground/background", "x"), ("Reset colors", "d"), ("Cycle tool mode", "\t"),
-            ("Temporary Hand tool (hold)", " "), ("Delete selection / layer / effect / lasso point", "\u{7f}"),
-            ("Apply current canvas operation", "\r"), ("Cancel current canvas operation", "\u{1b}"),
-            ("Decrease brush size", "["), ("Increase brush size", "]")] {
+        for (title, key) in [(localized("Toggle Fullscreen: the canvas alone on black (Esc also leaves)"), "f"),
+            (localized("Select tool"), "a"), (localized("Move / Transform tool"), "v"), (localized("Hand tool"), "h"),
+            (localized("Zoom tool"), "z"), (localized("Brush tool"), "b"), (localized("Eraser"), "e"), (localized("Spot Healing"), "j"),
+            (localized("Clone Stamp"), "s"), (localized("Type tool"), "t"), (localized("Gradient tool"), "g"), (localized("Shape tool"), "u"),
+            (localized("Eyedropper tool"), "i"), (localized("Marquee / cycle shape"), "m"), (localized("Magic"), "w"),
+            (localized("Lasso / cycle mode"), "l"), (localized("Blur / Smudge / Liquify"), "r"), (localized("Crop tool"), "c"),
+            (localized("Swap foreground/background"), "x"), (localized("Reset colors"), "d"), (localized("Cycle tool mode"), "\t"),
+            (localized("Temporary Hand tool (hold)"), " "), (localized("Delete selection / layer / effect / lasso point"), "\u{7f}"),
+            (localized("Apply current canvas operation"), "\r"), (localized("Cancel current canvas operation"), "\u{1b}"),
+            (localized("Decrease brush size"), "["), (localized("Increase brush size"), "]")] {
             result.append(entry(title, key))
         }
         result += [entry("Decrease brush hardness", "[", 8), entry("Increase brush hardness", "]", 8),
                    entry("Previous blend mode", "-", 8), entry("Next blend mode", "=", 8),
                    entry("Cycle shape kind", "u", 8)]
-        for digit in 0...9 { result.append(entry("Opacity digit \(digit) (type two for exact %)", String(digit))) }
-        for (direction, key) in [("Left", "\u{f702}"), ("Right", "\u{f703}"), ("Up", "\u{f700}"), ("Down", "\u{f701}")] {
-            result += [entry("Nudge \(direction) 1 px", key), entry("Nudge \(direction) 10 px", key, 8),
-                       entry("Move selected pixels \(direction) 1 px", key, 1), entry("Move selected pixels \(direction) 10 px", key, 9)]
+        for digit in 0...9 { result.append(entry(localized("Opacity digit %@ (type two for exact %)", String(digit)), String(digit))) }
+        for (direction, key) in [(localized("Left"), "\u{f702}"), (localized("Right"), "\u{f703}"), (localized("Up"), "\u{f700}"), (localized("Down"), "\u{f701}")] {
+            result += [entry(localized("Nudge %@ 1 px", direction), key), entry(localized("Nudge %@ 10 px", direction), key, 8),
+                       entry(localized("Move selected pixels %@ 1 px", direction), key, 1), entry(localized("Move selected pixels %@ 10 px", direction), key, 9)]
         }
-        result.append(.init(title: "Finish editing text", group: "Text Editing", original: ShortcutChord("\r", 1)))
-        for (title, key) in [("Decrease tracking", "\u{f702}"), ("Increase tracking", "\u{f703}"),
-                             ("Decrease leading", "\u{f700}"), ("Increase leading", "\u{f701}")] {
+        result.append(.init(title: localized("Finish editing text"), group: "Text Editing", original: ShortcutChord("\r", 1)))
+        for (title, key) in [(localized("Decrease tracking"), "\u{f702}"), (localized("Increase tracking"), "\u{f703}"),
+                             (localized("Decrease leading"), "\u{f700}"), (localized("Increase leading"), "\u{f701}")] {
             result.append(.init(title: title, group: "Text Editing", original: ShortcutChord(key, 2)))
-            result.append(.init(title: title + " by 10", group: "Text Editing", original: ShortcutChord(key, 10)))
+            result.append(.init(title: localized("%@ by 10", title), group: "Text Editing", original: ShortcutChord(key, 10)))
         }
         result.append(entry("Toggle Levels preview", "p", 2))
         return result
@@ -154,7 +155,7 @@ final class ShortcutSettings {
         return chord(definition)
     }
     func show() {
-        panel.show(title: "Keyboard Shortcuts", content: KeyboardShortcutsSheet(settings: self))
+        panel.show(title: localized("Keyboard Shortcuts"), content: KeyboardShortcutsSheet(settings: self))
     }
     func close() { panel.close() }
     func save(_ values: [String: ShortcutChord]) {
@@ -167,14 +168,14 @@ final class ShortcutSettings {
         var assigned: [ShortcutChord: String] = [:]
         for definition in ShortcutDefinition.all {
             let chord = values[definition.id] ?? definition.original
-            guard chord.key.count == 1, (0...15).contains(chord.modifiers) else { return "Choose a single key with optional modifiers." }
+            guard chord.key.count == 1, (0...15).contains(chord.modifiers) else { return localized("Choose a single key with optional modifiers.") }
             if definition.group == "Text Editing", chord.modifiers & 7 == 0 {
-                return "Text-editing shortcuts need Command, Option, or Control so they do not replace normal typing."
+                return localized("Text-editing shortcuts need Command, Option, or Control so they do not replace normal typing.")
             }
             if [ShortcutChord("q", 1), ShortcutChord(",", 1), ShortcutChord("m", 3)].contains(chord) {
-                return "\(chord.label) is reserved by macOS."
+                return localized("%@ is reserved by macOS.", chord.label)
             }
-            if let other = assigned[chord] { return "\(chord.label) is assigned to both \(other) and \(definition.title)." }
+            if let other = assigned[chord] { return localized("%@ is assigned to both %@ and %@.", chord.label, other, definition.title) }
             assigned[chord] = definition.title
         }
         return nil
@@ -240,10 +241,10 @@ private struct KeyboardShortcutsSheet: View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 6) {
                     ForEach(["Menus", "Canvas & Layers", "Text Editing"], id: \.self) { group in
-                        Text(group).font(.headline).padding(.top, 8)
-                        ForEach(ShortcutDefinition.all.filter { $0.group == group && (search.isEmpty || $0.title.localizedCaseInsensitiveContains(search)) }) { definition in
+                        Text(localized(group)).font(.headline).padding(.top, 8)
+                        ForEach(ShortcutDefinition.all.filter { $0.group == group && (search.isEmpty || $0.title.localizedCaseInsensitiveContains(search) || localized($0.title).localizedCaseInsensitiveContains(search)) }) { definition in
                             HStack {
-                                Text(definition.title)
+                                Text(localized(definition.title))
                                 Spacer()
                                 ShortcutRecorder(chord: draft[definition.id] ?? definition.original,
                                     recording: recording == definition.id,
@@ -289,8 +290,8 @@ private struct ShortcutRecorder: NSViewRepresentable {
     func makeNSView(context: Context) -> RecorderButton { RecorderButton() }
     func updateNSView(_ button: RecorderButton, context: Context) {
         button.start = start; button.finish = finish; button.recording = recording
-        button.title = recording ? "Press keys…" : chord.label
-        button.setAccessibilityLabel(recording ? "Press a shortcut" : chord.label)
+        button.title = recording ? localized("Press keys…") : chord.label
+        button.setAccessibilityLabel(recording ? localized("Press a shortcut") : chord.label)
         if recording, button.window?.firstResponder !== button { button.window?.makeFirstResponder(button) }
     }
     final class RecorderButton: NSButton {

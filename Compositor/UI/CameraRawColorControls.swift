@@ -13,14 +13,14 @@ struct CameraRawCurveControls: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Picker("Curve", selection: Binding(get: { edit?.cameraRawCurvePage ?? .parametric }, set: { session.filterEdit?.cameraRawCurvePage = $0 })) {
-                ForEach(CameraRawCurvePage.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                ForEach(CameraRawCurvePage.allCases, id: \.self) { Text(localized($0.rawValue)).tag($0) }
             }
             .pickerStyle(.segmented)
             .labelsHidden()
             .help("Parametric lifts tonal regions. Point places anchors on the curve.")
             if edit?.cameraRawCurvePage == .point {
                 Picker("Channel", selection: Binding(get: { edit?.cameraRawPointChannel ?? .rgb }, set: { session.filterEdit?.cameraRawPointChannel = $0 })) {
-                    ForEach(CameraRawPointChannel.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                    ForEach(CameraRawPointChannel.allCases, id: \.self) { Text(localized($0.rawValue)).tag($0) }
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
@@ -30,13 +30,13 @@ struct CameraRawCurveControls: View {
             curveGraph
                 .frame(height: 150)
                 .help(edit?.cameraRawCurvePage == .parametric
-                      ? "Drag up or down to lift or lower those tones. Drag a divider along the bottom to change which tones each region covers."
-                      : "Drag a point. Click to add one. Double-click a point to remove it.")
+                      ? localized("Drag up or down to lift or lower those tones. Drag a divider along the bottom to change which tones each region covers.")
+                      : localized("Drag a point. Click to add one. Double-click a point to remove it."))
             if edit?.cameraRawCurvePage != .point {
-                amount("Highlights", \.highlights, "Lifts or lowers the brightest tones.")
-                amount("Lights", \.lights, "Lifts or lowers the light tones.")
-                amount("Darks", \.darks, "Lifts or lowers the dark tones.")
-                amount("Shadows", \.shadows, "Lifts or lowers the darkest tones.")
+                amount(localized("Highlights"), \.highlights, "Lifts or lowers the brightest tones.")
+                amount(localized("Lights"), \.lights, "Lifts or lowers the light tones.")
+                amount(localized("Darks"), \.darks, "Lifts or lowers the dark tones.")
+                amount(localized("Shadows"), \.shadows, "Lifts or lowers the darkest tones.")
             } else {
                 if let point = selectedPoint {
                     Text("In \(Int((point.x * 255).rounded()))   Out \(Int((point.y * 255).rounded()))")
@@ -52,10 +52,10 @@ struct CameraRawCurveControls: View {
                 }
                 .help("Replaces this curve with a straight line or a contrast curve.")
                 if edit?.cameraRawPointChannel == .rgb {
-                    slider("Refine Saturation", \.refineSaturation, -100...100, 0, "How much the curve also changes color strength. Zero matches Photoshop; lower keeps it to brightness, higher adds more color.")
+                    slider(localized("Refine Saturation"), \.refineSaturation, -100...100, 0, "How much the curve also changes color strength. Zero matches Photoshop; lower keeps it to brightness, higher adds more color.")
                 }
             }
-            targetButton(armed: edit?.targetsCameraRawCurve == true, help: "Drag on the picture to move the curve for the tone under the pointer.") {
+            targetButton(armed: edit?.targetsCameraRawCurve == true, help: localized("Drag on the picture to move the curve for the tone under the pointer.")) {
                 session.filterEdit?.targetsCameraRawMixer = false
                 session.filterEdit?.targetsCameraRawCurve.toggle()
             }
@@ -123,16 +123,16 @@ struct CameraRawCurveControls: View {
 
     private func slider(_ title: String, _ key: WritableKeyPath<CameraRawCurveSettings, Double>, _ range: ClosedRange<Double>, _ reset: Double, _ help: String) -> some View {
         HStack {
-            Text(title).frame(width: 88, alignment: .leading).help(help)
+            Text(localized(title)).frame(width: 88, alignment: .leading).help(localized(help))
                 .scrubbable(sensitivity: 1,
                             value: Binding(get: { raw.curve[keyPath: key] },
                                            set: { value in update { $0.curve[keyPath: key] = value } }), range: range)
             CameraRawSlider(value: raw.curve[keyPath: key], range: range, track: .plain, help: help,
                             onChange: { value in update { $0.curve[keyPath: key] = value } },
                             onReset: { update { $0.curve[keyPath: key] = reset } })
-            TextField(title, value: Binding(get: { raw.curve[keyPath: key] }, set: { value in update { $0.curve[keyPath: key] = value } }),
+            TextField(localized(title), value: Binding(get: { raw.curve[keyPath: key] }, set: { value in update { $0.curve[keyPath: key] = value } }),
                       format: .number.precision(.fractionLength(0...0)))
-                .frame(width: 48).help(help)
+                .frame(width: 48).help(localized(help))
         }
     }
 
@@ -231,7 +231,7 @@ struct CameraRawCurveControls: View {
         Button(action: action) { Label("Targeted Adjustment", systemImage: "scope") }
             .buttonStyle(.bordered)
             .tint(armed ? Color.accentColor : Color.secondary)
-            .help(help)
+            .help(localized(help))
     }
 
     private func update(_ change: (inout CameraRawSettings) -> Void) {
@@ -272,7 +272,7 @@ struct CameraRawMixerControls: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Picker("Mixer", selection: Binding(get: { edit?.cameraRawMixerPage ?? .hsl }, set: { session.filterEdit?.cameraRawMixerPage = $0 })) {
-                ForEach(CameraRawMixerPage.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                ForEach(CameraRawMixerPage.allCases, id: \.self) { Text(localized($0.rawValue)).tag($0) }
             }
             .pickerStyle(.segmented)
             .labelsHidden()
@@ -280,7 +280,7 @@ struct CameraRawMixerControls: View {
             switch edit?.cameraRawMixerPage ?? .hsl {
             case .hsl:
                 Picker("Component", selection: Binding(get: { edit?.cameraRawMixerTab ?? .hue }, set: { session.filterEdit?.cameraRawMixerTab = $0 })) {
-                    ForEach(CameraRawMixerTab.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                    ForEach(CameraRawMixerTab.allCases, id: \.self) { Text(localized($0.rawValue)).tag($0) }
                 }
                 .pickerStyle(.segmented).labelsHidden()
                 .help("Hue shifts the color, Saturation its strength, and Luminance its brightness.")
@@ -306,7 +306,7 @@ struct CameraRawMixerControls: View {
     private func colorSlider(_ title: String, _ key: WritableKeyPath<CameraRawMixerSettings, [Double]>, _ help: String) -> some View {
         let index = min(7, edit?.cameraRawMixerSwatch ?? 0)
         return HStack {
-            Text(title).frame(width: 88, alignment: .leading).help(help)
+            Text(localized(title)).frame(width: 88, alignment: .leading).help(localized(help))
             CameraRawSlider(value: raw.mixer[keyPath: key][index], range: -100...100, track: familyTrack(index, key), help: help,
                             onChange: { value in update { $0.mixer[keyPath: key][index] = value } },
                             onReset: { update { $0.mixer[keyPath: key][index] = 0 } })
@@ -315,18 +315,18 @@ struct CameraRawMixerControls: View {
 
     private func familySlider(_ index: Int) -> some View {
         let key = mixerKey
-        let help = "\((edit?.cameraRawMixerTab ?? .hue).rawValue) of \(CameraRawMixerSettings.names[index])."
+        let help = localized("%@ of %@.", localized((edit?.cameraRawMixerTab ?? .hue).rawValue), localized(CameraRawMixerSettings.names[index]))
         return HStack {
-            Text(CameraRawMixerSettings.names[index]).frame(width: 78, alignment: .leading).help(help)
+            Text(localized(CameraRawMixerSettings.names[index])).frame(width: 78, alignment: .leading).help(localized(help))
                 .scrubbable(sensitivity: 1,
                             value: Binding(get: { raw.mixer[keyPath: key][index] },
                                            set: { value in update { $0.mixer[keyPath: key][index] = value } }), range: -100...100)
             CameraRawSlider(value: raw.mixer[keyPath: key][index], range: -100...100, track: familyTrack(index, key), help: help,
                             onChange: { value in update { $0.mixer[keyPath: key][index] = value } },
                             onReset: { update { $0.mixer[keyPath: key][index] = 0 } })
-            TextField(CameraRawMixerSettings.names[index], value: Binding(get: { raw.mixer[keyPath: key][index] }, set: { value in update { $0.mixer[keyPath: key][index] = value } }),
+            TextField(localized(CameraRawMixerSettings.names[index]), value: Binding(get: { raw.mixer[keyPath: key][index] }, set: { value in update { $0.mixer[keyPath: key][index] = value } }),
                       format: .number.precision(.fractionLength(0...0)))
-                .frame(width: 48).help(help)
+                .frame(width: 48).help(localized(help))
         }
     }
 
@@ -348,7 +348,7 @@ struct CameraRawMixerControls: View {
                         .overlay { Circle().stroke(edit?.cameraRawMixerSwatch == index ? Color.white : Color.clear, lineWidth: 2) }
                 }
                 .buttonStyle(.plain)
-                .help("Edit \(CameraRawMixerSettings.names[index]).")
+                .help(localized("Edit %@.", localized(CameraRawMixerSettings.names[index])))
             }
         }
     }
@@ -374,15 +374,15 @@ struct CameraRawMixerControls: View {
                 }
             }
             if raw.mixer.points.indices.contains(edit?.cameraRawPointIndex ?? 0) {
-                pointSlider("Hue Shift", \.hueShift, help: "Shifts the picked color around the color wheel.",
+                pointSlider("Hue Shift", \.hueShift, help: localized("Shifts the picked color around the color wheel."),
                            track: .hue(raw.mixer.points[edit?.cameraRawPointIndex ?? 0].hue))
-                pointSlider("Saturation Shift", \.saturationShift, help: "Makes the picked color stronger or quieter.",
+                pointSlider("Saturation Shift", \.saturationShift, help: localized("Makes the picked color stronger or quieter."),
                            track: .saturation(raw.mixer.points[edit?.cameraRawPointIndex ?? 0].hue))
-                pointSlider("Luminance Shift", \.luminanceShift, help: "Makes the picked color lighter or darker.",
+                pointSlider("Luminance Shift", \.luminanceShift, help: localized("Makes the picked color lighter or darker."),
                            track: .luminance(raw.mixer.points[edit?.cameraRawPointIndex ?? 0].hue))
-                pointSlider("Hue Range", \.hueRange, help: "How far in hue the adjustment reaches.", range: 5...180, reset: 30)
-                pointSlider("Saturation Range", \.saturationRange, help: "How far in saturation the adjustment reaches.", range: 0.05...1, reset: 0.4)
-                pointSlider("Luminance Range", \.luminanceRange, help: "How far in brightness the adjustment reaches.", range: 0.05...1, reset: 0.4)
+                pointSlider("Hue Range", \.hueRange, help: localized("How far in hue the adjustment reaches."), range: 5...180, reset: 30)
+                pointSlider("Saturation Range", \.saturationRange, help: localized("How far in saturation the adjustment reaches."), range: 0.05...1, reset: 0.4)
+                pointSlider("Luminance Range", \.luminanceRange, help: localized("How far in brightness the adjustment reaches."), range: 0.05...1, reset: 0.4)
                 Toggle("Visualize Range", isOn: Binding(get: { raw.mixer.points[edit?.cameraRawPointIndex ?? 0].visualize },
                                                        set: { value in updatePoint { $0.visualize = value } }))
                     .help("Dims the picture outside this color's range. It is not kept when you press OK.")
@@ -401,7 +401,7 @@ struct CameraRawMixerControls: View {
                              range: ClosedRange<Double> = -100...100, reset: Double = 0, track: CameraRawSliderTrack = .plain) -> some View {
         let index = edit?.cameraRawPointIndex ?? 0
         return HStack {
-            Text(title).frame(width: 110, alignment: .leading).help(help)
+            Text(localized(title)).frame(width: 110, alignment: .leading).help(localized(help))
             CameraRawSlider(value: raw.mixer.points[index][keyPath: key], range: range, track: track, help: help,
                             onChange: { value in updatePoint { $0[keyPath: key] = value } },
                             onReset: { updatePoint { $0[keyPath: key] = reset } })
@@ -433,7 +433,7 @@ struct CameraRawGradingControls: View {
             // Five segments spelled out want 453 points and the docked panel has 374, so the
             // choice is a menu rather than a row that runs past the panel's edge.
             Picker("Grading", selection: Binding(get: { page }, set: { session.filterEdit?.cameraRawGradePage = $0 })) {
-                ForEach(CameraRawGradePage.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                ForEach(CameraRawGradePage.allCases, id: \.self) { Text(localized($0.rawValue)).tag($0) }
             }
             .pickerStyle(.menu)
             .labelsHidden()
@@ -441,17 +441,17 @@ struct CameraRawGradingControls: View {
             .help("Three-Way shows shadows, midtones, and highlights. The other choices show one wheel.")
             if page == .threeWay {
                 HStack(spacing: 30) {
-                    wheel("Shadows", \.shadows)
-                    wheel("Midtones", \.midtones)
-                    wheel("Highlights", \.highlights)
+                    wheel(localized("Shadows"), \.shadows)
+                    wheel(localized("Midtones"), \.midtones)
+                    wheel(localized("Highlights"), \.highlights)
                 }
             } else {
                 wheel(page.rawValue, pageKey)
             }
-            slider("Blending", raw.grading.blending, 0...100, 50, "Controls how much the three tonal wheels overlap.") { value in
+            slider(localized("Blending"), raw.grading.blending, 0...100, 50, "Controls how much the three tonal wheels overlap.") { value in
                 update { $0.grading.blending = value }
             }
-            slider("Balance", raw.grading.balance, -100...100, 0, "Shifts the wheels toward shadows or highlights.") { value in
+            slider(localized("Balance"), raw.grading.balance, -100...100, 0, "Shifts the wheels toward shadows or highlights.") { value in
                 update { $0.grading.balance = value }
             }
         }
@@ -469,7 +469,7 @@ struct CameraRawGradingControls: View {
     private func wheel(_ title: String, _ key: WritableKeyPath<CameraRawGradingSettings, CameraRawGradeWheel>) -> some View {
         let wheel = raw.grading[keyPath: key]
         return VStack(spacing: 4) {
-            Text(title).font(.caption).help("Drag inside the wheel. Angle sets hue, distance sets saturation.")
+            Text(localized(title)).font(.caption).help("Drag inside the wheel. Angle sets hue, distance sets saturation.")
             GradeWheel(hue: wheel.hue, saturation: wheel.saturation,
                        set: { hue, saturation in update { $0.grading[keyPath: key].hue = hue; $0.grading[keyPath: key].saturation = saturation } },
                        reset: { update { $0.grading[keyPath: key].hue = 0; $0.grading[keyPath: key].saturation = 0 } })
@@ -478,7 +478,7 @@ struct CameraRawGradingControls: View {
                 .font(.caption2.monospacedDigit())
                 .help("Hue and saturation of this wheel.")
             // A slider asks for 120 on its own, which put three columns past the panel's edge.
-            CameraRawSlider(value: wheel.luminance, range: -100...100, track: .plain, help: "Brightness added by this wheel.",
+            CameraRawSlider(value: wheel.luminance, range: -100...100, track: .plain, help: localized("Brightness added by this wheel."),
                             onChange: { value in update { $0.grading[keyPath: key].luminance = value } },
                             onReset: { update { $0.grading[keyPath: key].luminance = 0 } })
                 .frame(width: 96)
@@ -487,7 +487,7 @@ struct CameraRawGradingControls: View {
 
     private func slider(_ title: String, _ value: Double, _ range: ClosedRange<Double>, _ reset: Double, _ help: String, set: @escaping (Double) -> Void) -> some View {
         HStack {
-            Text(title).frame(width: 78, alignment: .leading).help(help)
+            Text(localized(title)).frame(width: 78, alignment: .leading).help(localized(help))
             CameraRawSlider(value: value, range: range, track: .plain, help: help, onChange: set, onReset: { set(reset) })
         }
     }

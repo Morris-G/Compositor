@@ -17,7 +17,7 @@ struct LevelsSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Picker("Channel", selection: Binding(get: { settings.channel }, set: { channel in update { $0.channel = channel } })) {
-                ForEach(LevelsChannel.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                ForEach(LevelsChannel.allCases, id: \.self) { Text(localized($0.rawValue)).tag($0) }
             }.frame(width: 180)
             VStack(spacing: 0) {
                 histogram.frame(height: 150).background(.black.opacity(0.25))
@@ -27,20 +27,20 @@ struct LevelsSheet: View {
                 handles(output: false).frame(height: 20)
             }
             HStack {
-                field("Input black", value(\.black), decimals: 0)
+                field(localized("Input black"), value(\.black), decimals: 0)
                 Spacer()
-                field("Gamma", value(\.gamma), decimals: 2)
+                field(localized("Gamma"), value(\.gamma), decimals: 2)
                 Spacer()
-                field("Input white", value(\.white), decimals: 0)
+                field(localized("Input white"), value(\.white), decimals: 0)
             }
             VStack(spacing: 0) {
                 LinearGradient(colors: [.black, .white], startPoint: .leading, endPoint: .trailing).frame(height: 14)
                 handles(output: true).frame(height: 20)
             }
             HStack {
-                field("Output black", value(\.outputBlack), decimals: 0)
+                field(localized("Output black"), value(\.outputBlack), decimals: 0)
                 Spacer()
-                field("Output white", value(\.outputWhite), decimals: 0)
+                field(localized("Output white"), value(\.outputWhite), decimals: 0)
             }
             HStack {
                 Text("Sample").font(.caption).foregroundStyle(.secondary)
@@ -49,19 +49,19 @@ struct LevelsSheet: View {
                         edit?.sampleMode = edit?.sampleMode == mode ? nil : mode
                         session.brushRevision += 1
                     } label: {
-                        Label(mode.rawValue, systemImage: "eyedropper")
+                        Label(localized(mode.rawValue), systemImage: "eyedropper")
                     }.tint(edit?.sampleMode == mode ? .accentColor : .secondary)
                 }
             }
             if let mode = edit?.sampleMode {
-                Text("Click the original layer to set \(mode.rawValue.lowercased()). Click the eyedropper again to stop.")
+                Text(localized("Click the original layer to set %@. Click the eyedropper again to stop.", localized(mode.rawValue).lowercased()))
                     .font(.caption).foregroundStyle(.secondary)
             }
             VStack(alignment: .leading, spacing: 6) {
                 Text("Auto").font(.caption).foregroundStyle(.secondary)
                 HStack {
                     ForEach(LevelsAuto.allCases, id: \.self) { mode in
-                        Button(mode.rawValue) { session.autoLevels(mode) }
+                        Button(localized(mode.rawValue)) { session.autoLevels(mode) }
                     }
                 }.disabled(edit?.histogramReady != true)
             }
@@ -72,7 +72,7 @@ struct LevelsSheet: View {
                 Spacer()
                 Button("Reset") { edit?.sampleMode = nil; update { $0 = LevelsSettings() } }
             }
-            Text(session.adjustmentOriginal != nil ? "Underlying pixels · alpha-weighted histogram" : session.selection == nil ? "Original pixels · alpha-weighted histogram" : "Original pixels · selection and alpha-weighted histogram")
+            Text(session.adjustmentOriginal != nil ? localized("Underlying pixels · alpha-weighted histogram") : session.selection == nil ? localized("Original pixels · alpha-weighted histogram") : localized("Original pixels · selection and alpha-weighted histogram"))
                 .font(.caption).foregroundStyle(.secondary)
             Divider()
             HStack {
@@ -109,8 +109,8 @@ struct LevelsSheet: View {
             }
             let color: Color = switch settings.channel { case .rgb: .gray; case .red: .red; case .green: .green; case .blue: .blue }
             context.fill(path, with: .color(color))
-        }.accessibilityLabel("Original \(settings.channel.rawValue) histogram")
-        .help("Linear histogram with automatic vertical scaling. Tall spikes may extend beyond the graph; all tones from 0 to 255 remain included.")
+        }.accessibilityLabel(localized("Original %@ histogram", localized(settings.channel.rawValue)))
+        .help(localized("Linear histogram with automatic vertical scaling. Tall spikes may extend beyond the graph; all tones from 0 to 255 remain included."))
     }
     private func handles(output: Bool) -> some View {
         GeometryReader { geometry in
@@ -139,7 +139,7 @@ struct LevelsSheet: View {
                                 $0.current = range
                             }
                         })
-                    .accessibilityLabel(names[index])
+                    .accessibilityLabel(localized(names[index]))
             }
         }.coordinateSpace(name: output ? "levelsOutput" : "levelsInput")
     }

@@ -7,9 +7,9 @@ nonisolated enum ExportError: LocalizedError {
     case tooLarge, render, encode
     var errorDescription: String? {
         switch self {
-        case .tooLarge: "Image export supports canvases up to \(DocumentLimits.maxSurfaceMegapixels) megapixels and \(DocumentLimits.maxSide.formatted()) pixels per side."
-        case .render: "The canvas could not be rendered. Try a smaller canvas."
-        case .encode: "The image could not be encoded."
+        case .tooLarge: localized("Image export supports canvases up to %d megapixels and %@ pixels per side.", DocumentLimits.maxSurfaceMegapixels, DocumentLimits.maxSide.formatted())
+        case .render: localized("The canvas could not be rendered. Try a smaller canvas.")
+        case .encode: localized("The image could not be encoded.")
         }
     }
 }

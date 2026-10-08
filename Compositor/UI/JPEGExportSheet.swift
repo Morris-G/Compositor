@@ -40,10 +40,10 @@ struct JPEGExportSheet: View {
                     .help("Show the whole image (⌘0)")
                 Button { zoomBy(1) } label: { Image(systemName: "plus.magnifyingglass") }
                     .disabled(JPEGPreview.step(from: shownZoom, in: 1) == nil)
-                    .help("Zoom in (⌘+), now \(percent). At 100% each pixel of the JPEG is one pixel of the screen, as on the canvas")
+                    .help(localized("Zoom in (⌘+), now %@. At 100% each pixel of the JPEG is one pixel of the screen, as on the canvas", percent))
                 Button { zoomBy(-1) } label: { Image(systemName: "minus.magnifyingglass") }
                     .disabled(JPEGPreview.step(from: shownZoom, in: -1) == nil)
-                    .help("Zoom out (⌘−), now \(percent)")
+                    .help(localized("Zoom out (⌘−), now %@", percent))
             }
             // Closer to the title row than the rest of the dialog's spacing.
             .padding(.bottom, -8)
@@ -60,7 +60,7 @@ struct JPEGExportSheet: View {
             HStack {
                 Text("Quality")
                 Slider(value: $options.quality, in: 0...1, step: 0.01)
-                Text("\(Int((options.quality * 100).rounded()))%")
+                Text(verbatim: "\(Int((options.quality * 100).rounded()))%")
                     .monospacedDigit().frame(width: 45, alignment: .trailing)
             }
             HStack(spacing: 8) {

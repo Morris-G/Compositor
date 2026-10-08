@@ -113,7 +113,7 @@ extension EditorSession {
         guard edit.hasLine else { cancelGradient(); return }
         do {
             try edit.applyFill()
-            try await commitRasterEdit(edit.raster, name: edit.raster.isMask ? "Gradient Mask" : "Gradient")
+            try await commitRasterEdit(edit.raster, name: edit.raster.isMask ? localized("Gradient Mask") : localized("Gradient"))
         } catch { brushError = error.localizedDescription }
         if gradientEdit === edit { cancelGradient() }
     }

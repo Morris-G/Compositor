@@ -128,7 +128,7 @@ extension EditorSession {
         }
         guard canEditLayers, document != nil, rect.width >= 1, rect.height >= 1 else { return }
         guard Int(rect.width) * Int(rect.height) <= Self.maxShapePixels else {
-            brushError = "That shape is too large. A shape can cover up to \(DocumentLimits.maxSurfaceMegapixels) megapixels."
+            brushError = localized("That shape is too large. A shape can cover up to %@ megapixels.", String(DocumentLimits.maxSurfaceMegapixels))
             return
         }
         do {
@@ -143,7 +143,7 @@ extension EditorSession {
             let style = LayerShapeStyle(kind: draft.kind, red: foregroundColor.red, green: foregroundColor.green,
                                         blue: foregroundColor.blue, cornerRadius: draft.cornerRadius,
                                         lineWidth: draft.kind == .line ? thickness : nil, start: start, end: finish)
-            addPixelLayer(image, at: rect.origin, name: nextShapeName(draft.kind), editName: draft.kind.rawValue,
+            addPixelLayer(image, at: rect.origin, name: nextShapeName(draft.kind), editName: localized(draft.kind.rawValue),
                           dropsSelection: false, shape: LayerShape(style: style, image: image))
         } catch { brushError = error.localizedDescription }
     }

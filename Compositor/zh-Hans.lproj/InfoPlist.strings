@@ -1,0 +1,6 @@
+/* 文档类型与统一类型描述的本地化 */
+"Images" = "图像";
+"Compositor Project" = "Compositor 项目";
+"Compositor Layer" = "Compositor 图层";
+"Adobe Photoshop Document" = "Adobe Photoshop 文档";
+"Adobe Photoshop Large Document" = "Adobe Photoshop 大型文档";

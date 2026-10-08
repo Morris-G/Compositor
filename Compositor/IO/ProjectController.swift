@@ -329,11 +329,11 @@ final class ProjectController {
         await finishWriting()
         guard session.isModified, session.document != nil else { return true }
         let alert = NSAlert()
-        alert.messageText = "Save changes to \(session.projectURL?.lastPathComponent ?? "Untitled")?"
-        alert.informativeText = "Your changes will be lost if you don’t save them."
-        alert.addButton(withTitle: "Save")
-        alert.addButton(withTitle: "Cancel")
-        let dontSaveButton = alert.addButton(withTitle: "Don’t Save")
+        alert.messageText = localized("Save changes to %@?", session.projectURL?.lastPathComponent ?? localized("Untitled"))
+        alert.informativeText = localized("Your changes will be lost if you don’t save them.")
+        alert.addButton(withTitle: localized("Save"))
+        alert.addButton(withTitle: localized("Cancel"))
+        let dontSaveButton = alert.addButton(withTitle: localized("Don’t Save"))
         dontSaveButton.hasDestructiveAction = true
         let response = await show(alert)
         if response == .alertFirstButtonReturn { return await saveCurrent() }
